@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: gateway_service
+
+  cloud:
+    gateway:
+      routes:
+        - id: stable-api-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/**
+            - Weight=group1,90
+          filters:
+            - RewritePath=/api/(?<segment>.*), /stable/${segment}
+
+        - id: canary-api-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/**
+            - Weight=group1,10
+          filters:
+            - RewritePath=/api/(?<segment>.*), /canary/${segment}
